@@ -1,8 +1,17 @@
 # DRAFT Zenon Network CEX Integration Guide
 
+## Table of Contents
+- [What is Zenon Network?](#what-is-zenon-network)
+- [Token Information](#token-information)
+- [CEX Integration](#cex-integration)
+- [Node Operations](#node-operations)
+- [Security Considerations](#security-considerations)
+- [Support and Maintenance](#support-and-maintenance)
+- [Troubleshooting](#troubleshooting)
+
 ## What is Zenon Network?
 
-Zenon Network is a Layer 1 blockchain, also known as the “Network of Momentum” (NoM). It introduces a dual-ledger architecture designed to enable feeless transactions, scalability, high throughput, and resilience. The system combines a block-lattice for transaction storage with a meta-DAG (Directed Acyclic Graph) for consensus, ensuring efficiency and fault tolerance.
+Zenon Network is a 100% community-driven Layer 1 blockchain, also known as the “Network of Momentum” (NoM). It introduces a dual-ledger architecture designed to enable feeless transactions, scalability, high throughput, and resilience. The system combines a block-lattice for transaction storage with a meta-DAG (Directed Acyclic Graph) for consensus, ensuring efficiency and fault tolerance.
 
 Unlike traditional blockchain systems, Zenon Network will employ a leaderless Byzantine Fault Tolerance (BFT) consensus protocol, utilizing virtual voting alongside a hybrid Proof of Work (PoW) and Proof of Stake (PoS) mechanism. Furthermore, Zenon separates the smart contract layer from the consensus layer, enabling zApps (decentralized applications) to execute with enhanced security and performance.
 
@@ -49,6 +58,9 @@ Zenon Network lays the foundation for secure, scalable, and decentralized applic
 
 ### Current Supply
 - [ZNN Supply](https://zenonhub.io/api/nom/token/get-by-zts?token=zts1znnxxxxxxxxxxxxx9z4ulx)
+<details>
+<summary>View ZNN Supply JSON</summary>
+
 ```json
 {
   "data": {
@@ -66,7 +78,11 @@ Zenon Network lays the foundation for secure, scalable, and decentralized applic
   }
 }
 ```
+</details>
 - [QSR Supply](https://zenonhub.io/api/nom/token/get-by-zts?token=zts1qsrxxxxxxxxxxxxxmrhjll)
+<details>
+<summary>View QSR Supply JSON</summary>
+
 ```json
 {
   "data": {
@@ -84,6 +100,7 @@ Zenon Network lays the foundation for secure, scalable, and decentralized applic
   }
 }
 ```
+</details>
 **Additional Resources:** [What is the maximum supply?](https://ask.zenon.wiki/questions/D132/what-is-the-maximum-supply-of-znn-and-qsr/E1c3)
 
 ### Current Inflation
@@ -144,6 +161,8 @@ Unreceived transactions don’t have a paired account block. After a transaction
 
 #### Send Transaction before Receipt
 Hash: [8615f2d8d44655f473b07f5668099dcb8c0b1e13958821a594884080399cf345](https://zenonhub.io/explorer/transaction/8615f2d8d44655f473b07f5668099dcb8c0b1e13958821a594884080399cf345)
+<details>
+<summary>View Send Transaction JSON</summary>
 ```json
 {
     "version": 1,
@@ -193,9 +212,14 @@ Hash: [8615f2d8d44655f473b07f5668099dcb8c0b1e13958821a594884080399cf345](https:/
     "pairedAccountBlock": null
 }
 ```
+</details>
 
-### Send Transaction after Receipt (same hash)
+#### Send Transaction after Receipt (same hash)
 Hash: [8615f2d8d44655f473b07f5668099dcb8c0b1e13958821a594884080399cf345](https://zenonhub.io/explorer/transaction/8615f2d8d44655f473b07f5668099dcb8c0b1e13958821a594884080399cf345)
+
+<details>
+<summary>View Send Transaction JSON</summary>
+
 ```json
 {
     "version": 1,
@@ -280,9 +304,13 @@ Hash: [8615f2d8d44655f473b07f5668099dcb8c0b1e13958821a594884080399cf345](https:/
 }
 ```
 Note: the `pairedAccountBlock` has a new hash 6e224bb8a126422f0ff7d78833165a54226692960dd415c39f15b997a5877888
+</details>
 
-### Receive Transaction (new hash)
+#### Receive Transaction (new hash)
 Hash: [6e224bb8a126422f0ff7d78833165a54226692960dd415c39f15b997a5877888](https://zenonhub.io/explorer/transaction/6e224bb8a126422f0ff7d78833165a54226692960dd415c39f15b997a5877888?tab=json)
+
+<details>
+<summary>View Receive Transaction JSON</summary>
 
 ```json
 {
@@ -367,6 +395,7 @@ Hash: [6e224bb8a126422f0ff7d78833165a54226692960dd415c39f15b997a5877888](https:/
     }
 }
 ```
+</details>
 
 #### Send & Receive FAQs
 Q: Will all `descendantBlocks` of one block(including itself) will be in the same momentum?
@@ -375,25 +404,63 @@ A: No, they will not necessarily be in the same momentum. The tx to send and the
 Q: Will these will have the same status? received/unreceived (by check `pairedAccountBlock`)?
 A: No. The send block will have a `blockType` `2` and the receive block will have `blockType` `3`
 
-## Node Operations
-The Hypercore One community developers maintain a `go-zenon` node [deployment script](https://github.com/hypercore-one/deployment).  Follow the instructions there to deploy a node.  Also, Zenon Network community developers maintain a [Zenon Node Controller](https://github.com/zenon-network/znn_controller_dart) to deploy and maintain `go-zenon`.
+## CEX Integration
 
+### Integration Steps Overview
+1. **Infrastructure Setup**
+   - Deploy a Zenon node following the [Node Operations](#node-operations) section
+   - Meet minimum [System Requirements](#system-requirements)
+   - Configure network security and [firewall rules](#security-considerations)
 
-### Node Connection Information
-- Chain ID: `1`
-- Public Nodes:
-    - https://my.hc1node.com:35997
-    - wss://my.hc1node.com:35998
-    - https://node.zenonhub.io:35998
-    - wss://node.zenonhub.io:35998 
-- Public Node Source: https://github.com/zenon-network/zenon-node-database/blob/main/rpc-nodes-mainnet.json
+2. **Integration Method Selection**
+   - Choose between [Direct SDK Integration](#direct-sdk-integration) or [Wallet API Integration](#zenon-wallet-api)
+   - For most exchanges, the Wallet API is recommended for faster implementation
 
+3. **Wallet Implementation**
+   - Set up the Wallet API or implement a custome SDK wallet integration
+   - Configure automated [transaction receiving](#unreceived-transactions)
+   - Implement [plasma management](#key-features) for transaction processing
 
-## Zenon Wallet API
-The Zenon Wallet API is a production-ready solution that provides a secure interface for interacting with the Zenon Network. It's particularly useful for exchanges and services that need to manage multiple addresses and automate transaction handling.
+4. **Testing**
+   - Test deposit detection and processing
+   - Verify withdrawal functionality
+   - Validate transaction confirmation monitoring
+   - Test error handling and recovery procedures
 
-### Key Features
+5. **Security Review**
+   - Implement [security considerations](#security-considerations)
+   - Review access controls and network isolation
+   - Set up monitoring and alerting
 
+6. **Launch Preparation**
+   - Document [support procedures](#support-and-maintenance)
+   - Establish communication channels with the Zenon devs
+   - Create operational runbooks for common issues
+
+For detailed implementation guidance, continue reading the sections below.
+
+#### Infrastructure Setup
+1. **Direct SDK Integration**
+   - Use an SDK to develop a custom wallet to handle user funds
+    - [Dart](https://github.com/zenon-network/znn_sdk_dart)
+    - [.net](https://github.com/hypercore-one/znn_sdk_csharp)
+    - [go](https://github.com/MoonBaZZe/znn-sdk-go)
+    - [typescript](https://github.com/DexterLabZ/znn.ts)
+    - [java](https://github.com/KingGorrin/znn_sdk_java)
+  - Provides maximum flexibility and control
+  - Requires more development effort
+  - Recommended for exchanges with experienced blockchain teams
+
+2. **Zenon Wallet API Integration**
+   - Pre-built solution for common exchange operations
+   - Faster implementation time
+   - Automated transaction handling
+   - Optional but recommended for most exchanges
+
+### Zenon Wallet API
+The [Zenon Wallet API](https://github.com/hypercore-one/znn_walletapi_csharp) is a production-ready wallet solution that provides a secure interface for interacting with the Zenon Network. It's particularly useful for exchanges and services that need to manage multiple addresses and automate transaction handling.
+
+#### Key Features
 - **Secure Wallet Management**: 
   - Encrypted wallet storage
   - Configurable auto-locking
@@ -412,8 +479,7 @@ The Zenon Wallet API is a production-ready solution that provides a secure inter
   - Cross-platform compatibility
   - Production-ready configuration
 
-### Common Use Cases for Exchanges
-
+#### Common Use Cases for Exchanges
 1. **Deposit Processing**:
    - Automatically detect and receive incoming transactions
    - Track transaction confirmations
@@ -429,17 +495,78 @@ The Zenon Wallet API is a production-ready solution that provides a secure inter
    - Track address balances
    - Monitor address activity
 
-### Getting Started
+#### Wallet API System Requirements
+- **CPU**: 2+ cores
+- **RAM**: 4GB minimum
+- **Storage**: 20GB SSD minimum
+- **Network:** 100Mbps minimum, stable connection
+- **Operating System**: Ubuntu 22.04 LTS or newer
 
+#### Getting Started with the Zenon Wallet API
 The Wallet API is available as an open-source project:
 - **Repository:** [github.com/hypercore-one/znn_walletapi_csharp](https://github.com/hypercore-one/znn_walletapi_csharp)
-- **Documentation:** Available via Swagger UI when running
-- **Public Instance:** [walletapi.hypercore.one](https://walletapi.hypercore.one)
+- **Documentation:** API Documentation Available via Swagger UI when running.  Setup documentation is in the Wallet API repo above.
+- **Wallet Testnet:** [walletapi.hypercore.one](https://walletapi.hypercore.one)
 - **Plasma Bot Management:** Contact us for free access to the [plasmaBot](https://zenonhub.io/tools/plasma-bot).  We can issue an API key to automatically create plasma to send and receive transactions without needing to perform PoW.  
 
-For detailed setup instructions and API documentation, please refer to the repository README.
+For detailed setup instructions and API documentation, please refer to the repository README in the Zenon Wallet API repo.
+
+## Node Operations
+The CEX will need to deploy a local node to support their wallet infrastructure. The Hypercore One community developers maintain a `go-zenon` node [deployment script](https://github.com/hypercore-one/deployment). Follow the instructions there to deploy a node.  Also, Zenon Network community developers maintain a [Zenon Node Controller](https://github.com/zenon-network/znn_controller_dart) to deploy and maintain `go-zenon`.
+
+### Node Requirements
+- CPU: 4+ cores
+- RAM: 16GB minimum, 32GB recommended
+- Storage: 100GB SSD minimum
+- Network: 100Mbps minimum, stable connection
+- Operating System: Ubuntu 22.04 LTS or newer
+
+## Security Considerations
+
+When hosting the Wallet API:
+- Restrict access to internal resurces only
+- Deploy the public node on a separate server because it must be reachable from the interent
+
+## Node Connection Information
+- Chain ID: `1`
+- Public Nodes:
+    - https://my.hc1node.com:35997
+    - wss://my.hc1node.com:35998
+    - https://node.zenonhub.io:35998
+    - wss://node.zenonhub.io:35998 
+
+## Public Explorers
+Zenon Network offers two different explorer options.  
+- **3rd Party Explorer:** https://zenonhub.io/explorer
+- **Zenon Explorer:** https://explorer.zenon.network
+    - Make sure to add a node. 
+    - Chrome will throw a mixed-content error if the node does not have SSL enabled
+    - Hypercore One offers a public node at https://my.hc1node.com:35997
+
+### Support and Maintenance
+
+1. **Bug Reports**
+   - Submit issues on [GitHub](https://github.com/hypercore-one/znn_walletapi_csharp/issues)
+   - Include detailed reproduction steps
+   - Provide relevant logs
+   - Tag with appropriate labels
+
+2. **Feature Requests**
+   - Submit a feature request via [GitHub](https://github.com/hypercore-one/znn_walletapi_csharp/issues)
+   - Describe use case clearly
+   - Provide example scenarios
+
+3. **Emergency Support**
+    - Contact the developers via Matrix or SimpleX
 
 ## Contact Information
 - Matrix: https://matrix.to/#/#cex-integration:zenon.chat
 - SimpleX: [0x3639](https://simplex.chat/contact#/?v=2-7&smp=smp%3A%2F%2FPtsqghzQKU83kYTlQ1VKg996dW4Cw4x_bvpKmiv8uns%3D%40smp18.simplex.im%2FEZ_GqA2bYvbHODSpW7Pn4bWLbyFbOCY7%23%2F%3Fv%3D1-3%26dh%3DMCowBQYDK2VuAyEAsm-m7mTye5gc9vm7-rbouk773kMRjHL9WUQuhfl9nCY%253D%26srv%3Dlyqpnwbs2zqfr45jqkncwpywpbtq7jrhxnib5qddtr6npjyezuwd3nqd.onion)
 - Telegram: @ZeroX3639
+
+## Troubleshooting
+- TODO
+
+
+
+
