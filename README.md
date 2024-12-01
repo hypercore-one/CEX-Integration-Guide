@@ -79,6 +79,7 @@ Zenon Network lays the foundation for secure, scalable, and decentralized applic
 }
 ```
 </details>
+
 - [QSR Supply](https://zenonhub.io/api/nom/token/get-by-zts?token=zts1qsrxxxxxxxxxxxxxmrhjll)
 <details>
 <summary>View QSR Supply JSON</summary>
@@ -100,7 +101,8 @@ Zenon Network lays the foundation for secure, scalable, and decentralized applic
   }
 }
 ```
-</details>
+</details> 
+
 **Additional Resources:** [What is the maximum supply?](https://ask.zenon.wiki/questions/D132/what-is-the-maximum-supply-of-znn-and-qsr/E1c3)
 
 ### Current Inflation
@@ -151,8 +153,8 @@ Here are some example tokens currently active on the Zenon Network:
 By leveraging the flexibility of ZTS, users can create and manage tokens that fit their specific use cases, all while maintaining compatibility within the Zenon Network’s ecosystem.
 
 ### Token Logo
-- [ZN Token Link](assets/zenon_token_logo.png) `.png`
-- [ZN Token Link](assets/znn_token_logo.jpg) `.jpg`
+- [ZN Token .png](assets/zenon_token_logo.png)
+- [ZN Token .jpg](assets/znn_token_logo.jpg) 
 
 ### Unreceived Transactions
 Transaction on NoM are NOT automatically received. The recipient must accept tokens before they will settle into the wallet. You can see this in the TX details.
@@ -439,7 +441,7 @@ A: No. The send block will have a `blockType` `2` and the receive block will hav
 
 For detailed implementation guidance, continue reading the sections below.
 
-#### Infrastructure Setup
+### Wallet Setup Options
 1. **Direct SDK Integration**
    - Use an SDK to develop a custom wallet to handle user funds
     - [Dart](https://github.com/zenon-network/znn_sdk_dart)
@@ -459,6 +461,15 @@ For detailed implementation guidance, continue reading the sections below.
 
 ### Zenon Wallet API
 The [Zenon Wallet API](https://github.com/hypercore-one/znn_walletapi_csharp) is a production-ready wallet solution that provides a secure interface for interacting with the Zenon Network. It's particularly useful for exchanges and services that need to manage multiple addresses and automate transaction handling.
+
+#### Getting Started with the Zenon Wallet API
+The Wallet API is available as an open-source project:
+- **Repository:** [github.com/hypercore-one/znn_walletapi_csharp](https://github.com/hypercore-one/znn_walletapi_csharp)
+- **Documentation:** API Documentation Available via Swagger UI when running.  Setup documentation is in the Wallet API repo above.
+- **Wallet Testnet:** [walletapi.hypercore.one](https://walletapi.hypercore.one)
+- **Plasma Bot Management:** Contact us for free access to the [plasmaBot](https://zenonhub.io/tools/plasma-bot).  We can issue an API key to automatically create plasma to send and receive transactions without needing to perform PoW.  
+
+For detailed setup instructions and API documentation, please refer to the repository README in the Zenon Wallet API repo.
 
 #### Key Features
 - **Secure Wallet Management**: 
@@ -502,15 +513,6 @@ The [Zenon Wallet API](https://github.com/hypercore-one/znn_walletapi_csharp) is
 - **Network:** 100Mbps minimum, stable connection
 - **Operating System**: Ubuntu 22.04 LTS or newer
 
-#### Getting Started with the Zenon Wallet API
-The Wallet API is available as an open-source project:
-- **Repository:** [github.com/hypercore-one/znn_walletapi_csharp](https://github.com/hypercore-one/znn_walletapi_csharp)
-- **Documentation:** API Documentation Available via Swagger UI when running.  Setup documentation is in the Wallet API repo above.
-- **Wallet Testnet:** [walletapi.hypercore.one](https://walletapi.hypercore.one)
-- **Plasma Bot Management:** Contact us for free access to the [plasmaBot](https://zenonhub.io/tools/plasma-bot).  We can issue an API key to automatically create plasma to send and receive transactions without needing to perform PoW.  
-
-For detailed setup instructions and API documentation, please refer to the repository README in the Zenon Wallet API repo.
-
 ## Node Operations
 The CEX will need to deploy a local node to support their wallet infrastructure. The Hypercore One community developers maintain a `go-zenon` node [deployment script](https://github.com/hypercore-one/deployment). Follow the instructions there to deploy a node.  Also, Zenon Network community developers maintain a [Zenon Node Controller](https://github.com/zenon-network/znn_controller_dart) to deploy and maintain `go-zenon`.
 
@@ -543,7 +545,7 @@ Zenon Network offers two different explorer options.
     - Chrome will throw a mixed-content error if the node does not have SSL enabled
     - Hypercore One offers a public node at https://my.hc1node.com:35997
 
-### Support and Maintenance
+## Support and Maintenance
 
 1. **Bug Reports**
    - Submit issues on [GitHub](https://github.com/hypercore-one/znn_walletapi_csharp/issues)
